@@ -20,6 +20,9 @@
 </div>
 
 <!-- Javascript code that runs our Three.js examples -->
+<!-- 
+    그림자의 렌더링은 컴퓨팅 파워가 많이 필요하기 때문에,Three.js에서 기본 설정으로 비활성화되어 있다. 
+ -->
 <script type="text/javascript">
 
     // once everything is loaded, we run our Three.js stuff.
@@ -32,22 +35,17 @@
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 
         // create a render and set the size
+        // renderer에 그림자가 필요함을 알린다.
         var renderer = new THREE.WebGLRenderer({ antialias:true});
-        renderer.setClearColorHex();
-        renderer.setClearColor(new THREE.Color(0xEEEEEE));
+        renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
         renderer.setSize(window.innerWidth, window.innerHeight);
-
-        // show axes in the screen
-        var axes = new THREE.AxisHelper(20);
-        scene.add(axes);
+        renderer.shadowMapEnabled = true;
 
         // create the ground plane
         var planeGeometry = new THREE.PlaneGeometry(60, 20);
-        // var planeMaterial = new THREE.MeshBasicMaterial({color: 0xcccccc}); // 기존
-        // 2. 객체의 물질을 MeshLambertMaterial로 변경했다. 이 물질과 MeshPhongMaterial은 모두 렌더링될 때 Three.js에서 광원을 제공하는 물질이다.
         var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
-
         var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.receiveShadow = true;
 
         // rotate and position the plane
         plane.rotation.x = -0.5 * Math.PI;
@@ -60,11 +58,9 @@
 
         // create a cube
         var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-        // var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true}); // 기존
-        // 2. 객체의 물질을 MeshLambertMaterial로 변경했다. 이 물질과 MeshPhongMaterial은 모두 렌더링될 때 Three.js에서 광원을 제공하는 물질이다.
         var cubeMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
-
         var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        cube.castShadow = true;
 
         // position the cube
         cube.position.x = -4;
@@ -76,16 +72,14 @@
 
         // create a sphere
         var sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
-        // var sphereMaterial = new THREE.MeshBasicMaterial({color: 0x7777ff, wireframe: true}); // 기존
-        // 2. 객체의 물질을 MeshLambertMaterial로 변경했다. 이 물질과 MeshPhongMaterial은 모두 렌더링될 때 Three.js에서 광원을 제공하는 물질이다.
         var sphereMaterial = new THREE.MeshLambertMaterial({color: 0x7777ff});
-
         var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
         // position the sphere
         sphere.position.x = 20;
         sphere.position.y = 4;
         sphere.position.z = 2;
+        sphere.castShadow = true;
 
         // add the sphere to the scene
         scene.add(sphere);
@@ -97,8 +91,6 @@
         camera.lookAt(scene.position);
 
         // add spotlight for the shadows
-        // 1. THREE.SpotLight은 지정된 위치(spotLight.position.set(-40, 60, -10))로부터 장면을 조명한다.
-        // 1. 현 시점에서 장면을 렌더링하면 이전과 다를 바가 없다. 그 이유는 물질에 따라 광원에 대해 다르게 반응하기 때문이다. Three.MeshBasicMaterial에서 사용한 기본 물질은 장면에서 광원에 대해 아무런 반응도 하지 않는다. 단지 정해진 색상으로 렌더링될 뿐이다. 
         var spotLight = new THREE.SpotLight(0xffffff); 
         spotLight.position.set(-40, 60, -10);
         spotLight.castShadow = true;
