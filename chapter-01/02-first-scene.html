@@ -5,6 +5,8 @@
 <head>
     <title>Example 01.02 - First Scene</title>
     <script type="text/javascript" src="../libs/three.js"></script>
+    <!-- 애니메이션되는 초당 프레임 수를 그래프로 나타낸다. -->
+    <script type="text/javascript" src="../libs/stats.js"></script>
     <style>
         body {
             /* set margin to 0 and overflow to hidden, to go fullscreen */
@@ -14,9 +16,10 @@
     </style>
 </head>
 <body>
-
-<!-- Div which will hold the Output -->
-<div id="WebGL-output">
+    <div id="Stats-output">
+    </div>
+    <!-- Div which will hold the Output -->
+    <div id="WebGL-output">
 </div>
 
 <!-- Javascript code that runs our Three.js examples -->
@@ -27,7 +30,7 @@
 
     // once everything is loaded, we run our Three.js stuff.
     function init() {
-
+        var stats = initStats();
         // create a scene, that will hold all our elements such as objects, cameras and lights.
         var scene = new THREE.Scene();
 
@@ -99,8 +102,31 @@
         // add the output of the renderer to the html element
         document.getElementById("WebGL-output").appendChild(renderer.domElement);
 
-        // render the scene
-        renderer.render(scene, camera);
+        renderScene();
+
+        function renderScene() {
+            // 새로운 렌더링 주기에 있을 때 이를 stats 객체에 알리는 것
+            stats.update(); 
+            // renderScene 함수에서 애니메이션이 계속 지속되도록 requestAnimationFrame을 다시 호출한다.
+            requestAnimationFrame(renderScene);
+            renderer.render(scene, camera);
+        }
+
+        function initStats() {
+            var stats = new Stats();
+            
+            // 0으로 설정하면 초당 프레임수 측정, 1로 설정하면 렌더링 시간 측정
+            stats.setMode(0); // 0: fps, 1: ms
+
+            // Align top-left
+            stats.domElement.style.position = 'absolute';
+            stats.domElement.style.left = '0px';
+            stats.domElement.style.top = '0px';
+
+            document.getElementById("Stats-output").appendChild(stats.domElement);
+
+            return stats;
+        }
     }
     window.onload = init;
 
