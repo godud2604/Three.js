@@ -7,6 +7,7 @@
     <script type="text/javascript" src="../libs/three.js"></script>
     <!-- 애니메이션되는 초당 프레임 수를 그래프로 나타낸다. -->
     <script type="text/javascript" src="../libs/stats.js"></script>
+    <script type="text/javascript" src="../libs/dat.gui.js"></script>
     <style>
         body {
             /* set margin to 0 and overflow to hidden, to go fullscreen */
@@ -104,18 +105,29 @@
 
         // call the render function
         var step = 0;
+
+        var controls = new function () {
+            this.rotationSpeed = 0.02;
+            this.bouncingSpeed = 0.03;
+        };
+
+        var gui = new dat.GUI();
+        gui.add(controls, 'rotationSpeed', 0, 0.5); // 0에서 0.5의 범위로 설정
+        gui.add(controls, 'bouncingSpeed', 0, 0.5);
+
+
         renderScene();
 
         function renderScene() {
             stats.update(); 
             // rotate the cube around its axes
-            cube.rotation.x += 0.02;
-            cube.rotation.y += 0.02;
-            cube.rotation.z += 0.02;
+            cube.rotation.x += controls.rotationSpeed;
+            cube.rotation.y += controls.rotationSpeed;
+            cube.rotation.z += controls.rotationSpeed;
 
             // bounce the sphere up and down
             // 구체의 바운싱되는 속도를 정의
-            step += 0.04;
+            step += controls.bouncingSpeed;
             // Math.cos와 Math.sin 함수가 부드러운 궤적을 만드는 데 도움이 된다.
             sphere.position.x = 20 + ( 10 * (Math.cos(step)));
             sphere.position.y = 2 + ( 10 * Math.abs(Math.sin(step)));
